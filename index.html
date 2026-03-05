@@ -1,0 +1,223 @@
+# my-travel-app
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEOUL VIBE - 旅遊規劃</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --orange: #FF4500;
+            --black: #000000;
+            --marble: #F0F0F0;
+            --border-width: 3px;
+            --hard-shadow: 6px 6px 0px #000000;
+        }
+
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+        body {
+            background-color: var(--marble);
+            background-image: 
+                linear-gradient(45deg, #e0e0e0 25%, transparent 25%), 
+                linear-gradient(-45deg, #e0e0e0 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #e0e0e0 75%),
+                linear-gradient(-45deg, transparent 75%, #e0e0e0 75%);
+            background-size: 100px 100px; /* 模擬大理石幾何紋理 */
+            margin: 0; padding: 20px; padding-bottom: 120px;
+            color: var(--black);
+        }
+
+        /* 硬陰影卡片基礎 */
+        .neo-card {
+            background: white;
+            border: var(--border-width) solid var(--black);
+            box-shadow: var(--hard-shadow);
+            padding: 15px;
+            margin-bottom: 25px;
+            transition: transform 0.1s;
+        }
+
+        h2 { font-weight: 900; text-transform: uppercase; margin: 0 0 15px 0; font-size: 1.4rem; }
+
+        /* 雜誌風六宮格 */
+        .magazine-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-auto-rows: minmax(100px, auto);
+            gap: 15px;
+        }
+
+        .span-2 { grid-column: span 2; background: var(--orange); color: white; }
+
+        /* 橫向滑動日期 */
+        .date-container {
+            display: flex;
+            overflow-x: auto;
+            gap: 12px;
+            padding: 10px 0;
+            margin-bottom: 20px;
+            -webkit-overflow-scrolling: touch;
+        }
+        .date-item {
+            flex: 0 0 auto;
+            border: var(--border-width) solid var(--black);
+            background: white;
+            padding: 10px 20px;
+            font-weight: 900;
+            box-shadow: 4px 4px 0px var(--black);
+        }
+        .date-item.active { background: var(--orange); color: white; }
+
+        /* 時間軸 */
+        .timeline { border-left: 4px solid var(--black); margin-left: 10px; padding-left: 25px; }
+        .timeline-node { position: relative; margin-bottom: 30px; }
+        .timeline-node::before {
+            content: "";
+            position: absolute; left: -34px; top: 5px;
+            width: 14px; height: 14px;
+            background: var(--orange); border: 3px solid var(--black);
+        }
+
+        /* 韓幣計算機 */
+        .calc-screen {
+            background: var(--black); color: var(--orange);
+            padding: 20px; text-align: right; margin-bottom: 15px;
+        }
+        #krw-val { font-size: 2rem; display: block; }
+        #twd-val { font-size: 1rem; color: #888; }
+        .calc-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .btn {
+            background: white; border: var(--border-width) solid var(--black);
+            padding: 15px; font-size: 1.2rem; font-weight: 900;
+            box-shadow: 3px 3px 0px var(--black);
+            cursor: pointer;
+        }
+        .btn:active { transform: translate(2px, 2px); box-shadow: none; }
+
+        /* 勾選清單 */
+        .list-item { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-weight: 900; }
+        input[type="checkbox"] {
+            width: 24px; height: 24px; border: 3px solid var(--black);
+            appearance: none; background: white; cursor: pointer;
+            position: relative;
+        }
+        input[type="checkbox"]:checked { background: var(--orange); }
+
+        /* 固定底部長條按鈕 */
+        .bottom-nav {
+            position: fixed; bottom: 20px; left: 0; width: 100%;
+            display: flex; justify-content: center; padding: 0 20px;
+        }
+        .action-btn {
+            width: 100%; max-width: 400px;
+            background: var(--orange); color: white;
+            border: var(--border-width) solid var(--black);
+            padding: 18px; font-size: 1.2rem; font-weight: 900;
+            box-shadow: var(--hard-shadow);
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 style="font-size: 3.5rem; line-height: 0.9; margin-bottom: 30px;">SEOUL<br><span style="color: var(--orange);">TRIP.</span></h1>
+
+    <div class="magazine-grid">
+        <div class="neo-card span-2">
+            <h2>KOREA 2026</h2>
+            <p>MAR 05 - MAR 10</p>
+        </div>
+        <div class="neo-card"><h2>MAP</h2></div>
+        <div class="neo-card"><h2>BUDGET</h2></div>
+        <div class="neo-card"><h2>STAY</h2></div>
+        <div class="neo-card"><h2>WIFI</h2></div>
+    </div>
+
+    <div style="margin-top: 40px;">
+        <h2>SCHEDULE</h2>
+        <div class="date-container">
+            <div class="date-item active">05 MAR</div>
+            <div class="date-item">06 MAR</div>
+            <div class="date-item">07 MAR</div>
+            <div class="date-item">08 MAR</div>
+        </div>
+        <div class="timeline">
+            <div class="timeline-node">
+                <div style="font-size: 0.8rem;">14:30</div>
+                <div style="font-size: 1.3rem; font-weight: 900;">仁川機場快捷 AREX</div>
+            </div>
+            <div class="timeline-node">
+                <div style="font-size: 0.8rem;">17:00</div>
+                <div style="font-size: 1.3rem; font-weight: 900;">明洞換錢所 & 晚餐</div>
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-top: 40px;">
+        <h2>KRW TO TWD</h2>
+        <div class="neo-card">
+            <div class="calc-screen">
+                <span id="krw-val">0 KRW</span>
+                <span id="twd-val">≈ 0 TWD</span>
+            </div>
+            <div class="calc-btns">
+                <button class="btn" onclick="press(1)">1</button>
+                <button class="btn" onclick="press(2)">2</button>
+                <button class="btn" onclick="press(3)">3</button>
+                <button class="btn" onclick="press(4)">4</button>
+                <button class="btn" onclick="press(5)">5</button>
+                <button class="btn" onclick="press(6)">6</button>
+                <button class="btn" onclick="press(7)">7</button>
+                <button class="btn" onclick="press(8)">8</button>
+                <button class="btn" onclick="press(9)">9</button>
+                <button class="btn" style="background:#eee" onclick="cls()">C</button>
+                <button class="btn" onclick="press(0)">0</button>
+                <button class="btn" style="background:var(--orange); color:white" onclick="save()">ADD</button>
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-top: 40px;">
+        <h2>CHECKLIST</h2>
+        <div class="neo-card">
+            <div class="list-item"><input type="checkbox"> 護照 / 簽證 K-ETA</div>
+            <div class="list-item"><input type="checkbox"> T-Money 卡充值</div>
+            <div class="list-item"><input type="checkbox"> 買 HBAF 杏仁果</div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <button class="action-btn">Add New Plan</button>
+    </div>
+
+    <script>
+        let currentInput = "";
+        const RATE = 0.023; // 1 KRW ≈ 0.023 TWD
+
+        function press(num) {
+            currentInput += num;
+            render();
+        }
+
+        function cls() {
+            currentInput = "";
+            render();
+        }
+
+        function render() {
+            const val = currentInput || "0";
+            document.getElementById('krw-val').innerText = parseInt(val).toLocaleString() + " KRW";
+            document.getElementById('twd-val').innerText = "≈ " + Math.round(parseInt(val) * RATE).toLocaleString() + " TWD";
+        }
+
+        function save() {
+            if(!currentInput) return;
+            alert("已記錄支出: " + currentInput + " KRW");
+            cls();
+        }
+    </script>
+</body>
+</html>
